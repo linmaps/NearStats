@@ -1,4 +1,4 @@
-# near_stats
+# NearStats
 A process for finding the average distance people live from a surveillance camera, according to OpenStreetMap data. This method uses R as a GIS and includes basic data manipulation and analysis in the tidyverse combined with sf.
 
 ## Datasets:
