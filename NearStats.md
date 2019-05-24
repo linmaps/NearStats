@@ -1,9 +1,6 @@
 NearStats: How close do you live to a surveillance camera in the UK?
 ================
 
-**NearStats**: How close do you live to a surveillance camera in the UK?
-========================================================================
-
 *Adventures in spatial analysis with R*
 ---------------------------------------
 
