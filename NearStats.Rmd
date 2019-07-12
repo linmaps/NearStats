@@ -16,7 +16,8 @@ This process explores using R to do some basic spatial analysis on the proximity
 I did some preprocessing of the data in ArcGIS Pro prior to loading it into R. The steps I took are as follows:
 - Extract only the administrative boundaries for the UK (gadm is a global dataset)
 - Convert LandScan Global 2016 to points (using only pixels with pop greater than 0) and only for UK
-- Pull OpenStreetMaps data for the UK - combine both point and polygon Points of Interest into a single point layer
+- Pull OpenStreetMaps data for the UK 
+- Combine both point and polygon Points of Interest into a single point layer
 - Extract all surveillance cameras from the OSM POIs for the UK (need to combine Scotland, Wales, England, Northern Ireland)
 
 And now on to the R...
@@ -26,6 +27,7 @@ And now on to the R...
 ```{r}
 library(tidyverse)
 library(sf)
+library(tmap)
 ```
 
 ## Load in the datasets
@@ -56,6 +58,8 @@ uk_ls_foa_prj <- st_join(uk_ls_prj, uk_foa_prj, join = st_intersects, left = TRU
 
 Right now, this process in R takes many hours to run. I'm working on different ways to accomplish this method without crashing my computer, so in the meantime, I'm running this part of the analysis in ArcGIS Pro using the `Near Tool`.
 
+In ArcGIS, use the Near Tool. Use `uk_ls_foa_prj` as the input features and `uk_cam_prj` as the near features. Check the "location" box. Then, export the file back out as "uk_ls_foa_cam_prj.shp" and prepare to reload back into R.
+
 ```{r}
 # uk_closest_cam <- list()
 # for(i in seq_len(nrow(uk_ls_foa_prj))){
@@ -67,8 +71,8 @@ Right now, this process in R takes many hours to run. I'm working on different w
 #   select(pointid, pop, foa, geometry, cam_geom = geometry1) %>%
 #   mutate(cam_dist = mapply(st_distance, geometry, cam_geom))
 
-st_write(uk_ls_foa_prj, "uk_ls_foa_prj.shp")
-st_write(uk_cam_prj, "uk_cam_prj.shp")
+# st_write(uk_ls_foa_prj, "uk_ls_foa_prj.shp")
+# st_write(uk_cam_prj, "uk_cam_prj.shp")
 
 # In ArcGIS, use the Near Tool. Use uk_ls_foa_prj as the input features and uk_cam_prj as the near features. Check the "location" box. Then, export the file back out as "uk_ls_foa_cam_prj.shp" and prepare to reload back into R.
 
@@ -89,21 +93,20 @@ uk_avg_dist <- uk_ls_cam_prj %>%
 
 ## Create a quick plot of the average distance to a camera by county
 
-```{r, fig.height=20, fig.width=15}
+```{r, fig.height=15, fig.width=15}
 uk_foa_prj <- uk_foa_prj %>% 
   select(foa = NAME_2)
 uk_foa_cam_dist_prj <- left_join(uk_foa_prj, uk_avg_dist, by = "foa")
 
-ggplot(uk_foa_cam_dist_prj) +
-  geom_sf(aes(fill = cam), color = "white") +
-  scale_fill_viridis_c() +
-  labs(title = "UK: How far do you live from a surveillance camera?", fill = "Avg Distance (in kilometers)") +
-  theme(
-    axis.text = element_text(size = 10),
-    title = element_text(size = 20),
-    legend.position = "bottom",
-    legend.text = element_text(size = 10),
-    legend.key.size = unit(1, "cm"),
-    panel.background = element_blank()
-  )
+tm_shape(uk_foa_cam_dist_prj) +
+  tm_polygons("cam", style = "jenks", 
+              palette = "-viridis", 
+              title = "Distance in kilometers") +
+  tm_legend(legend.position = c("left", "top"), 
+            legend.title.size = 2, 
+            legend.text.size = 1.5) +
+  tm_layout(title = "UK: How far do you live from a surveillance camera?", 
+            title.size = 2.5,
+            bg.color = "grey85",
+            inner.margins = c(0.05, 0.05, 0.05, 0.05))
 ```
