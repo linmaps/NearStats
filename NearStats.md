@@ -12,7 +12,13 @@ This process explores using R to do some basic spatial analysis on the proximity
 -   OpenStreetMaps Points of Interest: <http://download.geofabrik.de/>
 -   UK Administrative Boundary (GADM): <https://gadm.org/data.html>
 
-I did some preprocessing of the data in ArcGIS Pro prior to loading it into R. The steps I took are as follows: - Extract only the administrative boundaries for the UK (gadm is a global dataset) - Convert LandScan Global 2016 to points (using only pixels with pop greater than 0) and only for UK - Pull OpenStreetMaps data for the UK - combine both point and polygon Points of Interest into a single point layer - Extract all surveillance cameras from the OSM POIs for the UK (need to combine Scotland, Wales, England, Northern Ireland)
+I did some preprocessing of the data in ArcGIS Pro prior to loading it into R. The steps I took are as follows: 
+
+- Extract only the administrative boundaries for the UK (gadm is a global dataset) 
+- Convert LandScan Global 2016 to points (using only pixels with pop greater than 0) and only for UK 
+- Pull OpenStreetMaps data for the UK 
+- Combine both point and polygon Points of Interest into a single point layer 
+- Extract all surveillance cameras from the OSM POIs for the UK (need to combine Scotland, Wales, England, Northern Ireland)
 
 And now on to the R...
 
